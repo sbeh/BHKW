@@ -1,0 +1,3 @@
+#!/bin/bash
+python ./Desktop/Mail/dispad.py
+

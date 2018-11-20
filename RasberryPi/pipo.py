@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# pipo.py stdin + fifo1 zu dispa.py
+# rw.py stdin + fifo1 zu dispa.py
 # fifos werden vom Leser erzeugt und geloescht!!
 # Lesezugriffe alle 100ms duerften keinen SD-Card verschleiss erzeugen
 import os
@@ -9,9 +9,10 @@ import select
 import io
 import datetime
 import time
+time.sleep(1)		# genug Zeit bis dispad oben ist
 
-FIFO1 = '/var/tmp/fifo1'   # pipo to dispad - 
-FIFO2 = '/var/tmp/fifo2'   # dispad to pipo
+FIFO1 = '/var/tmp/fifo1'   # rw to dispad - 
+FIFO2 = '/var/tmp/fifo2'   # dispad to rw
 read_list = [sys.stdin]      # multiple files monitored for input
 timeout = 0.1                   # select()  wait secs for input. ausreichend fuer eine Zeile
 
@@ -27,7 +28,7 @@ def fifo_reader(fifo):        # dispad abhören
     if line:
         sys.stdout.write(line)  # stdout-Ausgabe ohne \n\r
         sys.stdout.flush()      # sofort anzeigen
-        if line.find('RA_TI')>=0: # Jemand will vom Raspi wissen wie spät es ist
+        if line.find('RA_TI')>=0:
            today = datetime.datetime.today()
            sys.stdout.write("TI_")  # stdout-Ausgabe ohne \n\r
            print today              # Ausgabe -> Terminal
@@ -60,12 +61,12 @@ def main():
             for file in ready:              # ansonsten stdin-Eingabe abarbeiten
                 line = file.readline()
                 if line:
-                    fifo1_writer(line)      # pipo -> dispad
+                    fifo1_writer(line)      # rw -> dispad
                 if line.find('RA_TI')>=0:
                    today = datetime.datetime.today()
                    print today              # Ausgabe -> raspi
                    fifo1_writer(str(today)) # Ausgabe -> dispad -> Funk
-        fifo_reader(fifo2)               # dispad -> pipo  Antwort einen Zyklus spaeter abholen
+        fifo_reader(fifo2)               # dispad -> rw  Antwort einen Zyklus spaeter abholen
 
 try:
     main()

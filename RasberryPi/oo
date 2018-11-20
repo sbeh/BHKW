@@ -1,0 +1,6 @@
+#!/bin/bash
+pkill -9 python
+python ./Desktop/Mail/dispad.py &
+python ./Desktop/Mail/pipo.py
+pkill -9 python
+

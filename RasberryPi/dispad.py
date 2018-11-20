@@ -11,8 +11,8 @@ import subprocess
 import os
 import atexit
 
-FIFO1 = '/var/tmp/fifo1'       # pipo -> dispad
-FIFO2 = '/var/tmp/fifo2'       # dispad -> pipo
+FIFO1 = '/var/tmp/fifo1'       # rw -> dispad
+FIFO2 = '/var/tmp/fifo2'       # dispad -> rw
 FIFO3 = '/var/tmp/fifo3'       # dispad -> logging reader
 
 def kontrolliere():

