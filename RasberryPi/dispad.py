@@ -11,9 +11,25 @@ import subprocess
 import os
 import atexit
 
-FIFO1 = '/var/tmp/fifo1'       # rw -> dispad
+FIFO1 = '/var/tmp/fifo1'       # rw,tcp -> dispad
 FIFO2 = '/var/tmp/fifo2'       # dispad -> rw
 FIFO3 = '/var/tmp/fifo3'       # dispad -> logging reader
+FIFO_TO_TCP = '/var/tmp/dispad->tcp' # dispad -> tcp
+
+# ---
+
+from util import debug
+
+# ---
+
+def tcpTrySend(data):
+    try:
+        with open(FIFO_TO_TCP, 'w', 0) as file:
+            file.write(data)
+    except StandardError as error:
+        debug('DISPAD->TCP: Fehler beim Schreiben in {}: {}'.format(FIFO_TO_TCP, error))
+
+# ---
 
 def kontrolliere():
     ip=ser.read(100)          # ganze Zeile lesen
@@ -26,6 +42,7 @@ def kontrolliere():
         if  os.path.exists(FIFO3):                   # hoert jemand zu?                         
             with open(FIFO3, 'a',0) as fifo3:    # unbuffered
                 fifo3.write(ip)                              # serial -> fifo
+        tcpTrySend(ip)
     if ip.find('ALARM')>=0:
         subprocess.call("python /home/pi/Desktop/Mail/mail.py %s" % (ip[:ip.find('\r')]) ,shell=True)
         print("Email verschickt")
