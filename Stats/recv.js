@@ -46,12 +46,14 @@ var start = () => {
 var stop = () => {
     try {
         sock.removeAllListeners()
+    } catch(Exception) {
+    }
+    try {
         sock.destroy()
     } catch(Exception) {
-
-    } finally {
-        sock = null
     }
+
+        sock = null
 
     console.error('Disconnected')
 }
