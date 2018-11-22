@@ -1,20 +1,15 @@
 'use strict'
 
-process.on('multipleResolves', () => {
-    console.error('process.multipleResolves', arguments)
-    stop()
-})
-process.on('rejectionHandled', () => {
-    console.error('process.rejectionHandled', arguments)
-    stop()
-})
-process.on('uncaughtException', () => {
-    console.error('process.uncaughtException', arguments)
-    stop()
-})
-process.on('unhandledRejection', () => {
-    console.error('process.unhandledRejection', arguments)
-    stop()
+;[
+    'multipleResolves',
+    'rejectionHandled',
+    ['uncaughtException', error => stop(`uncaughtException (${error})`)],
+    'unhandledRejection'
+].forEach(event => {
+    if (event instanceof Array)
+        process.on(event[0], event[1])
+    else
+        process.on(event, () => stop(event))
 })
 
 var config = JSON.parse(require('fs').readFileSync('config.json'))
@@ -37,13 +32,20 @@ var start = () => {
         }))
     })
 
-    sock.on('timeout', stop)
-    sock.on('end', stop)
-    sock.on('error', stop)
-    sock.on('close', stop)
+    ;[
+        'timeout',
+        'end',
+        ['error', error => stop('error (' + error.message + ')')],
+        ['close', hadError => stop('close' + (hadError ? ' (had error)' : ''))]
+    ].forEach(event => {
+        if (event instanceof Array)
+            sock.on(event[0], event[1])
+        else
+            sock.on(event, () => stop(event))
+    })
 }
 
-var stop = () => {
+var stop = (reason) => {
     try {
         sock.removeAllListeners()
     } catch(Exception) {
@@ -53,9 +55,9 @@ var stop = () => {
     } catch(Exception) {
     }
 
-        sock = null
+    sock = null
 
-    console.error('Disconnected')
+    console.error('Disconnected', reason)
 }
 
 process.on('beforeExit', () => {
