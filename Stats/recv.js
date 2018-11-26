@@ -22,7 +22,7 @@ var start = () => {
 
         sock.setEncoding('utf8')
         sock.setKeepAlive(true, 50 * 1000/* 50 seconds */)
-        sock.setTimeout(6 * 60 * 1000/* 6 minutes */)
+        sock.setTimeout(config.reconnectWhenSilenceForMinutes * 60 * 1000)
     })
 
     sock.on('data', data => {
