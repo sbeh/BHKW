@@ -2,4 +2,12 @@
     "host": "localhost",
     "port": 1234,
     "reconnectWhenSilenceForMinutes": 6,
+    "parserRetryReadOnEOFAfterMinutes": 2,
+    "parserInflux": {
+        "host": "localhost",
+        "protocol": "https",
+        "username": "username",
+        "password": "password",
+        "database": "bhkw"
+    }
 }
