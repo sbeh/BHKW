@@ -194,7 +194,7 @@ function send(ifdb) {
         if (ifdb.points[0])
             send(ifdb)
     }).catch(error => {
-        console.error('Error uploading date to influx', error)
+        console.error('Error uploading data to influx', error)
         ifdb.points.unshift(points)
         ifdb.busy = false
     })
