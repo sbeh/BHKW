@@ -114,8 +114,11 @@ function data(json) {
     }
 
     if (unmatched) {
-        console.error('Could not match data with regex', undata)
-        undata = undefined
+        console.error('Could not match data with regex', undata.time, undata.data.substr(0, undata.data.indexOf('\n')))
+        undata = {
+            time: json.time,
+            data: undata.data.substr(undata.data.indexOf('\n') + 1)
+        }
     }
 }
 
