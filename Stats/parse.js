@@ -138,6 +138,7 @@ function insert(time, name, data) {
 
     for(var field in data)
         switch (data[field]) {
+            case undefined: delete data[field]
             case 'AN': data[field] = true
             case 'AUS': data[field] = false
         }
@@ -159,6 +160,8 @@ function connect(name, data) {
     if (!influxdb[name]) {
         var fields = {}
         for(var field in data) {
+            if (data[field] === undefined) // optional value
+                continue
             if (data[field].includes('.'))
                 fields[field] = influx.FieldType.FLOAT
             else
